@@ -1,0 +1,249 @@
+[
+  {
+    "key": "asset_directory",
+    "type": "directory",
+    "label": "Model and codec directory",
+    "help": "Prepare the pinned 24.1 GB model/codecs first. Runtime verifies local files and never downloads."
+  },
+  {
+    "key": "environment_python",
+    "type": "file",
+    "label": "Inference Python executable",
+    "help": "Dedicated Linux Python 3.12 with the pinned dependencies. Empty uses the app interpreter only if compatible; nothing installs automatically."
+  },
+  {
+    "key": "language",
+    "type": "select",
+    "label": "Spoken language",
+    "help": "Auto or one of 31 languages declared by MOSS v1.5. Actual pronunciation quality depends on the model and input.",
+    "options": [
+      "auto",
+      "zh",
+      "yue",
+      "en",
+      "ar",
+      "cs",
+      "da",
+      "nl",
+      "fi",
+      "fr",
+      "de",
+      "el",
+      "he",
+      "hi",
+      "hu",
+      "it",
+      "ja",
+      "ko",
+      "mk",
+      "ms",
+      "fa",
+      "pl",
+      "pt",
+      "ro",
+      "ru",
+      "es",
+      "sw",
+      "sv",
+      "tl",
+      "th",
+      "tr",
+      "vi"
+    ]
+  },
+  {
+    "key": "reference_audio",
+    "type": "file",
+    "label": "Optional voice reference",
+    "help": "Optional finalized local clip: 0.5–30 seconds, at most 32 MiB. Without it the model selects a voice. Use only a voice you may reproduce."
+  },
+  {
+    "key": "device",
+    "type": "select",
+    "label": "Inference device",
+    "help": "CUDA recommended; no silent CPU fallback. CPU requires float32 and substantial RAM. The model/codec load anew for each request.",
+    "options": [
+      "cuda:0",
+      "cpu"
+    ]
+  },
+  {
+    "key": "precision",
+    "type": "select",
+    "label": "Model precision",
+    "help": "Bfloat16 on supported CUDA, or float32. The codec stays float32. CPU plus bfloat16 is refused explicitly.",
+    "options": [
+      "bfloat16",
+      "float32"
+    ]
+  },
+  {
+    "key": "format",
+    "type": "select",
+    "label": "Completed file format",
+    "help": "Complete Ogg/Opus at 48 kHz or PCM WAV at 24 kHz. No direct live stream port.",
+    "options": [
+      "ogg_opus",
+      "wav"
+    ]
+  },
+  {
+    "key": "output_directory",
+    "type": "directory",
+    "label": "Completed audio directory",
+    "help": "Empty uses this node’s persistent audio directory. Unique names, no overwrites or automatic deletion."
+  },
+  {
+    "key": "target_duration_sec",
+    "type": "number",
+    "label": "Target duration (seconds; 0 = automatic)",
+    "help": "Optional duration conditioning, not an exact-length guarantee. Use 0 or 0.08 seconds up to the maximum audio duration.",
+    "advanced": true,
+    "min": 0,
+    "max": 90
+  },
+  {
+    "key": "max_audio_sec",
+    "type": "integer",
+    "label": "Maximum audio duration (seconds)",
+    "help": "Reject the entire result above this limit, including all audio regions. Never crop and label incomplete speech complete.",
+    "advanced": true,
+    "min": 1,
+    "max": 90
+  },
+  {
+    "key": "max_text_chars",
+    "type": "integer",
+    "label": "Maximum text characters",
+    "help": "Reject oversized text. The combined text and reference tokens must also fit the model’s context window.",
+    "advanced": true,
+    "min": 1,
+    "max": 2000
+  },
+  {
+    "key": "max_new_tokens",
+    "type": "integer",
+    "label": "Maximum generation steps",
+    "help": "Budget for combined text/audio autoregressive steps. Both audio end and assistant EOS must be present; exhaustion publishes nothing.",
+    "advanced": true,
+    "min": 64,
+    "max": 4096
+  },
+  {
+    "key": "max_segments",
+    "type": "integer",
+    "label": "Maximum audio regions",
+    "help": "Allow multiple complete audio regions. They are decoded separately in order; no region is silently discarded.",
+    "advanced": true,
+    "min": 1,
+    "max": 16
+  },
+  {
+    "key": "text_temperature",
+    "type": "number",
+    "label": "Text-channel temperature",
+    "help": "Official text-channel sampling temperature. Zero selects greedy decoding; not a voice or emotion selector.",
+    "advanced": true,
+    "min": 0,
+    "max": 2
+  },
+  {
+    "key": "text_top_p",
+    "type": "number",
+    "label": "Text-channel top-p",
+    "help": "Official text-channel nucleus-sampling probability.",
+    "advanced": true,
+    "min": 0.01,
+    "max": 1
+  },
+  {
+    "key": "text_top_k",
+    "type": "integer",
+    "label": "Text-channel top-k",
+    "help": "Candidate text-token count. Zero disables this filter.",
+    "advanced": true,
+    "min": 0,
+    "max": 500
+  },
+  {
+    "key": "audio_temperature",
+    "type": "number",
+    "label": "Audio-channel temperature",
+    "help": "Official audio-code sampling temperature. Zero selects greedy decoding.",
+    "advanced": true,
+    "min": 0,
+    "max": 2
+  },
+  {
+    "key": "audio_top_p",
+    "type": "number",
+    "label": "Audio-channel top-p",
+    "help": "Official audio-code nucleus-sampling probability.",
+    "advanced": true,
+    "min": 0.01,
+    "max": 1
+  },
+  {
+    "key": "audio_top_k",
+    "type": "integer",
+    "label": "Audio-channel top-k",
+    "help": "Candidate audio-code count. Zero disables this filter.",
+    "advanced": true,
+    "min": 0,
+    "max": 1024
+  },
+  {
+    "key": "audio_repetition_penalty",
+    "type": "number",
+    "label": "Audio repetition penalty",
+    "help": "Official audio-token repetition control. Default 1; not a guarantee against repeated words.",
+    "advanced": true,
+    "min": 1,
+    "max": 2
+  },
+  {
+    "key": "threads",
+    "type": "integer",
+    "label": "CPU threads",
+    "help": "Bound native CPU parallelism in the owned inference process.",
+    "advanced": true,
+    "min": 1,
+    "max": 16
+  },
+  {
+    "key": "timeout_sec",
+    "type": "integer",
+    "label": "Total request deadline (seconds)",
+    "help": "Includes verification, loading, inference, encoding and publication. Maximum 240 seconds for managed execution.",
+    "advanced": true,
+    "min": 1,
+    "max": 240
+  },
+  {
+    "key": "memory_limit_mib",
+    "type": "integer",
+    "label": "Process address-space limit (MiB)",
+    "help": "Optional Linux virtual-address ceiling: 0 disables it, otherwise at least 4096 MiB. CUDA reserves large virtual ranges. Not a RAM reservation.",
+    "advanced": true,
+    "min": 0,
+    "max": 262144
+  },
+  {
+    "key": "min_available_ram_mib",
+    "type": "integer",
+    "label": "Required available RAM (MiB)",
+    "help": "Default 32 GiB. CPU also requires float32 weights plus a margin; CUDA checks free VRAM. These checks do not reserve memory.",
+    "advanced": true,
+    "min": 8192,
+    "max": 262144
+  },
+  {
+    "key": "max_pending",
+    "type": "integer",
+    "label": "Pending request limit",
+    "help": "Active Runtime only. Zero rejects new text while busy. Interrupt stops the current job and clears earlier pending requests.",
+    "advanced": true,
+    "min": 0,
+    "max": 16
+  }
+]
